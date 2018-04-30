@@ -43,7 +43,7 @@ return [
 
     // configured IRC channels
     'channels' => [
-	    'Default Project' => '#issues',
+        'Default Project' => '#issues',
     ],
 
     'default_category' => 'default',

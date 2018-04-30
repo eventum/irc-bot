@@ -17,13 +17,20 @@ class IrcBot
 {
     /** @var Config */
     private $config;
+    /** @var IrcClient */
+    private $ircClient;
 
-    public function __construct(Config $config)
+    public function __construct(Config $config, IrcClient $ircClient)
     {
         $this->config = $config;
+        $this->ircClient = $ircClient;
     }
 
     public function run()
     {
+        $this->ircClient->connect();
+        $this->ircClient->login();
+        $this->ircClient->joinChannels();
+        $this->ircClient->listen();
     }
 }
