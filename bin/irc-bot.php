@@ -11,11 +11,12 @@
  * that were distributed with this source code.
  */
 
+use Eventum\IrcBot\Config;
 use Eventum\IrcBot\IrcBot;
 
 ini_set('memory_limit', '1024M');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$bot = new IrcBot();
+$bot = new IrcBot(new Config(dirname(__DIR__) . '/config/config.php'));
 $bot->run();

@@ -15,6 +15,14 @@ namespace Eventum\IrcBot;
 
 class IrcBot
 {
+    /** @var Config */
+    private $config;
+
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
+
     public function run()
     {
     }
