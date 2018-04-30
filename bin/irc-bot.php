@@ -11,9 +11,7 @@
  * that were distributed with this source code.
  */
 
-use Eventum\IrcBot\Config;
-use Eventum\IrcBot\IrcBot;
-use Eventum\IrcBot\IrcClient;
+use Eventum\IrcBot\Application;
 
 ini_set('memory_limit', '1024M');
 
@@ -23,9 +21,5 @@ require __DIR__ . '/../vendor/autoload.php';
 // otherise $SMARTIRC_nreplycodes from defines.php is not initialized
 require_once 'Net/SmartIRC/defines.php';
 
-$config = new Config(dirname(__DIR__) . '/config/config.php');
-$bot = new IrcBot(
-    $config,
-    new IrcClient($config)
-);
-$bot->run();
+$app = new Application();
+$app->run();
