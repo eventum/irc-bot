@@ -13,6 +13,7 @@
 
 namespace Eventum\IrcBot;
 
+use Eventum\IrcBot\BotCommands;
 use Net_SmartIRC;
 
 class IrcClient
@@ -45,6 +46,8 @@ class IrcClient
         // users are accessible via $irc->user array, i.e $irc->user['meebey']->host;
         $irc->setChannelSyncing(true);
         $irc->setUserSyncing(true);
+
+        $this->registerHandlers($irc);
 
         return $irc;
     }
@@ -82,5 +85,15 @@ class IrcClient
     public function listen()
     {
         $this->irc->listen();
+    }
+
+    /**
+     * @param Net_SmartIRC $irc
+     */
+    private function registerHandlers(Net_SmartIRC $irc)
+    {
+        // register bot commands
+        $commands = new BotCommands($irc);
+        $commands->register($irc);
     }
 }
