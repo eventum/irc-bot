@@ -1,0 +1,12 @@
+{
+    "name": "eventum/irc-bot",
+    "config": {
+        "platform": {
+            "php": "5.6.0"
+        },
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^5.6.0 || ^7.0"
+    }
+}
