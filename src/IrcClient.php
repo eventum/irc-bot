@@ -23,10 +23,10 @@ class IrcClient
     /** @var Net_SmartIRC */
     private $irc;
 
-    public function __construct(Config $config)
+    public function __construct(Net_SmartIRC $irc, Config $config)
     {
         $this->config = $config;
-        $this->irc = $this->configure(new Net_SmartIRC());
+        $this->irc = $this->configure($irc);
     }
 
     private function configure(Net_SmartIRC $irc)

@@ -17,9 +17,5 @@ ini_set('memory_limit', '1024M');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// NB: must require this in global context
-// otherise $SMARTIRC_nreplycodes from defines.php is not initialized
-require_once 'Net/SmartIRC/defines.php';
-
 $app = new Application();
 $app->run();
