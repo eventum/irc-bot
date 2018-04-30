@@ -6,6 +6,11 @@
         },
         "sort-packages": true
     },
+    "autoload": {
+        "psr-4": {
+            "Eventum\\IrcBot\\": "src/"
+        }
+    },
     "require": {
         "php": "^5.6.0 || ^7.0"
     }
