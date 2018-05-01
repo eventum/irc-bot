@@ -33,11 +33,8 @@ class IrcClient
 
     private function configure(Net_SmartIRC $irc, Config $config)
     {
-        // reconnect is poorly designed, do not use it
-        // @see https://pear.php.net/bugs/bug.php?id=20974
-        //$irc->setAutoRetry(true);
-        $irc->setAutoRetry(false);
-        $irc->setAutoRetryMax(PHP_INT_MAX);
+        $irc->setAutoRetryMax(0);
+        $irc->setAutoRetry(true);
         $irc->setReconnectDelay(10000);
 
         $irc->setReceiveTimeout(600);
