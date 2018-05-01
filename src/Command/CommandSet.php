@@ -38,6 +38,8 @@ class CommandSet implements EventListenerInterface
                 $regex = "^!?{$commandName}\b";
                 $irc->registerActionHandler(SMARTIRC_TYPE_QUERY, $regex, $command, $methodName);
             }
+            // unreference, as registerActionHandler uses &$command
+            unset($command);
         }
     }
 
