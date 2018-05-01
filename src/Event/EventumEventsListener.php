@@ -15,6 +15,7 @@ namespace Eventum\IrcBot\Event;
 
 use Eventum\IrcBot\Command\BaseCommand;
 use Eventum\IrcBot\Config;
+use Eventum\IrcBot\Entity\Project;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Eventum\RPC\XmlRpcException;
@@ -28,7 +29,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
     private $default_category;
     /** @var array */
     private $channels = [];
-    /** @var array */
+    /** @var Project[] */
     private $projects = [];
 
     public function __construct(
@@ -45,19 +46,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
     public function register(Net_SmartIRC $irc)
     {
         $this->channels = $this->config->getChannels();
-
-        foreach (array_keys($this->channels) as $projectName) {
-            $project = $this->rpcClient->getProjectByName($projectName);
-            // skip inexistent projects
-            if (!$project) {
-                continue;
-            }
-            // skip inactive projects
-            if ($project['prj_status'] !== 'active' || $project['prj_remote_invocation'] !== 'enabled') {
-                continue;
-            }
-            $this->projects[$project['prj_id']] = $project;
-        }
+        $this->projects = $this->getProjects();
 
         if (!$this->projects) {
             // skip notify if no projects enabled
@@ -67,9 +56,32 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
         $irc->registerTimeHandler(3000, $this, 'notifyEvents');
     }
 
-    public function notifyEvents()
+    private function getProjects()
     {
-        foreach (array_keys($this->projects) as $prj_id) {
+        $projects = [];
+
+        foreach ($this->channels as $projectName => $channels) {
+            $result = $this->rpcClient->getProjectByName($projectName);
+            if (!$result) {
+                continue;
+            }
+            $project = new Project($result);
+            if (!$project->enabled()) {
+                continue;
+            }
+            $project->setChannels($channels);
+            $projects[$project['prj_id']] = $project;
+        }
+
+        return $projects;
+    }
+
+    public function notifyEvents(Net_SmartIRC $irc)
+    {
+        foreach ($this->projects as $prj_id => $project) {
+            if (!$project->anyChannelJoined($irc)) {
+                continue;
+            }
             $this->processMessages($prj_id);
         }
     }
