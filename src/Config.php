@@ -14,6 +14,7 @@
 namespace Eventum\IrcBot;
 
 use ArrayAccess;
+use Eventum\IrcBot\Config\Channel;
 use IteratorAggregate;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,6 +30,20 @@ class Config implements ArrayAccess, IteratorAggregate
         $this->configureOptions($resolver);
 
         $this->options = $resolver->resolve($options);
+    }
+
+    /**
+     * @return array
+     */
+    public function getChannels()
+    {
+        $channels = [];
+        // map project_id => channel(s)
+        foreach ($this['channels'] as $project_name => $options) {
+            $channels[$project_name] = Channel::createChannels($options, $this['default_category']);
+        }
+
+        return $channels;
     }
 
     private function configureOptions(OptionsResolver $resolver)

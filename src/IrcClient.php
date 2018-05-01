@@ -13,6 +13,7 @@
 
 namespace Eventum\IrcBot;
 
+use Eventum\IrcBot\Config\Channel;
 use Eventum\IrcBot\Event\EventListenerInterface;
 use Net_SmartIRC;
 
@@ -79,8 +80,15 @@ class IrcClient
      */
     public function joinChannels()
     {
-        foreach ($this->config['channels'] as $projectName => $channelName) {
-            $this->irc->join($channelName);
+        foreach ($this->config->getChannels() as $projectName => $channels) {
+            foreach ($channels as $channel) {
+                /** @var Channel $channel */
+                if ($channel->key) {
+                    $this->irc->join($channel->name, $channel->key);
+                } else {
+                    $this->irc->join($channel->name);
+                }
+            }
         }
     }
 
