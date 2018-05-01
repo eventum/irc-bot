@@ -13,21 +13,15 @@
 
 namespace Eventum\IrcBot\Event;
 
+use Eventum\IrcBot\Command\BaseCommand;
 use Eventum\IrcBot\Config;
-use Eventum\IrcBot\IrcClient;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
 
-class EventumEventsListener implements EventListenerInterface
+class EventumEventsListener extends BaseCommand implements EventListenerInterface
 {
-    /** @var IrcClient */
-    protected $ircClient;
-    /** @var UserDb */
-    protected $userDb;
-    /** @var EventumXmlRpcClient */
-    protected $rpcClient;
     /** @var Config */
     private $config;
     /** @var string */
@@ -38,14 +32,12 @@ class EventumEventsListener implements EventListenerInterface
     private $projects = [];
 
     public function __construct(
-        IrcClient $ircClient,
+        Net_SmartIRC $irc,
         UserDb $userDb,
         EventumXmlRpcClient $rpcClient,
         Config $config
     ) {
-        $this->ircClient = $ircClient;
-        $this->userDb = $userDb;
-        $this->rpcClient = $rpcClient;
+        parent::__construct($irc, $userDb, $rpcClient);
         $this->default_category = $config['default_category'];
         $this->config = $config;
     }
@@ -96,7 +88,7 @@ class EventumEventsListener implements EventListenerInterface
             if ($row['ino_target_usr_id']) {
                 $nick = $this->userDb->findByEmail($row['usr_email']);
                 if ($nick) {
-                    $this->ircClient->sendResponse($nick, $row['ino_message']);
+                    $this->sendResponse($nick, $row['ino_message']);
                 }
                 // FIXME: why mark it sent if user is not online?
                 $this->markEventSent($prj_id, $row['ino_id']);
@@ -123,7 +115,7 @@ class EventumEventsListener implements EventListenerInterface
                 }
 
                 if ($channel->hasCategory($row['ino_category'])) {
-                    $this->ircClient->sendResponse($channel->name, $message);
+                    $this->sendResponse($channel->name, $message);
                 }
             }
             $this->markEventSent($prj_id, $row['ino_id']);

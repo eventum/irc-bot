@@ -24,7 +24,7 @@ class ServiceProvider implements ServiceProviderInterface
     {
         $app['config.path'] = dirname(__DIR__) . '/config/config.php';
 
-        $app[Net_SmartIRC::class] = function ($app) {
+        $app[Net_SmartIRC::class] = function () {
             // NB: must require this in global context
             // otherise $SMARTIRC_nreplycodes from defines.php is not initialized
             global $SMARTIRC_nreplycodes;
@@ -46,29 +46,25 @@ class ServiceProvider implements ServiceProviderInterface
             return $client;
         };
 
-        $app[IrcClient::class] = function ($app) {
-            return new IrcClient($app[Net_SmartIRC::class], $app[Config::class]);
-        };
-
         $app[UserDb::class] = function () {
             return new UserDb();
         };
 
         $app[IrcBot::class] = function ($app) {
             $commands = [
-                new Command\HelpCommand($app[IrcClient::class]),
+                new Command\HelpCommand($app[Net_SmartIRC::class]),
                 new Command\AuthCommand(
-                    $app[IrcClient::class],
+                    $app[Net_SmartIRC::class],
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class]
                 ),
                 new Command\ClockInCommand(
-                    $app[IrcClient::class],
+                    $app[Net_SmartIRC::class],
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class]
                 ),
                 new Command\QuarantinedIssueCommand(
-                    $app[IrcClient::class],
+                    $app[Net_SmartIRC::class],
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class]
                 ),
@@ -77,14 +73,14 @@ class ServiceProvider implements ServiceProviderInterface
                 new Command\CommandSet($commands),
                 new Event\NickChangeListener($app[UserDb::class]),
                 new Event\EventumEventsListener(
-                    $app[IrcClient::class],
+                    $app[Net_SmartIRC::class],
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class],
                     $app[Config::class]
                 ),
             ];
 
-            return new IrcBot($app[Config::class], $app[IrcClient::class], $listeners);
+            return new IrcBot($app[Config::class], $app[Net_SmartIRC::class], $listeners);
         };
     }
 }
