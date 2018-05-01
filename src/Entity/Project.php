@@ -24,6 +24,15 @@ class Project implements ArrayAccess, IteratorAggregate
 {
     use OptionsArrayAccessTrait;
 
+    const KEYS = [
+        'prj_id' => null,
+        'prj_created_date' => null,
+        'prj_remote_invocation' => null,
+        'prj_segregate_reporter' => null,
+        'prj_status' => null,
+        'prj_title' => null,
+    ];
+
     /** @var Channel[] */
     private $channels = [];
 
@@ -32,7 +41,7 @@ class Project implements ArrayAccess, IteratorAggregate
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
 
-        $this->options = $resolver->resolve($options);
+        $this->options = $resolver->resolve($this->filterKeys($options));
     }
 
     public function enabled()
@@ -64,26 +73,11 @@ class Project implements ArrayAccess, IteratorAggregate
 
     private function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'prj_id' => null,
-            'assigned_statuses' => null,
-            'prj_anonymous_post' => null,
-            'prj_anonymous_post_options' => null,
-            'prj_assigned_users' => null,
-            'prj_created_date' => null,
-            'prj_customer_backend' => null,
-            'prj_initial_sta_id' => null,
-            'prj_lead_usr_id' => null,
-            'prj_mail_aliases' => null,
-            'prj_outgoing_sender_email' => null,
-            'prj_outgoing_sender_name' => null,
-            'prj_remote_invocation' => null,
-            'prj_segregate_reporter' => null,
-            'prj_sender_flag' => null,
-            'prj_sender_flag_location' => null,
-            'prj_status' => null,
-            'prj_title' => null,
-            'prj_workflow_backend' => null,
-        ]);
+        $resolver->setDefaults(self::KEYS);
+    }
+
+    private function filterKeys($options)
+    {
+        return array_intersect_key($options, array_flip(array_keys(self::KEYS)));
     }
 }
