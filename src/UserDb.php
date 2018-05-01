@@ -46,6 +46,11 @@ class UserDb
         unset($this->db[$nick]);
     }
 
+    public function has($nick)
+    {
+        return array_key_exists($nick, $this->db);
+    }
+
     public function all()
     {
         return $this->db;

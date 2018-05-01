@@ -62,6 +62,11 @@ class ServiceProvider implements ServiceProviderInterface
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class]
                 ),
+                new Command\ClockInCommand(
+                    $app[IrcClient::class],
+                    $app[UserDb::class],
+                    $app[EventumXmlRpcClient::class]
+                ),
             ];
             $listeners = [
                 new Event\NickChangeListener($app[UserDb::class]),

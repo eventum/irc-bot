@@ -26,6 +26,7 @@ class HelpCommand extends BaseCommand
     {
         $commands = [
             'auth' => 'Format is "auth user@example.com password"',
+            'clock' => 'Format is "clock [in|out]"',
             'help' => 'Display this usage',
         ];
 
