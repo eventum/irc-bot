@@ -15,15 +15,15 @@ namespace Eventum\IrcBot;
 
 class IrcBot
 {
-    /** @var Config */
-    private $config;
     /** @var IrcClient */
     private $ircClient;
+    /** @var ProcessControl */
+    private $processControl;
 
-    public function __construct(Config $config, IrcClient $ircClient, array $listeners)
+    public function __construct(IrcClient $ircClient, ProcessControl $processControl, array $listeners)
     {
-        $this->config = $config;
         $this->ircClient = $ircClient;
+        $this->processControl = $processControl;
         foreach ($listeners as $listener) {
             $this->ircClient->register($listener);
         }
@@ -34,6 +34,14 @@ class IrcBot
         $this->ircClient->connect();
         $this->ircClient->login();
         $this->ircClient->joinChannels();
-        $this->ircClient->listen();
+
+        // loop forever, reconnect and retry
+        // @see https://pear.php.net/bugs/bug.php?id=20974
+        while (!$this->processControl->shutdown) {
+            $this->ircClient->listen();
+            $this->ircClient->reconnect();
+        }
+
+        $this->ircClient->disconnect();
     }
 }

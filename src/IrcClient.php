@@ -97,6 +97,16 @@ class IrcClient
         $this->irc->listen();
     }
 
+    public function reconnect()
+    {
+        $this->irc->reconnect();
+    }
+
+    public function disconnect()
+    {
+        $this->irc->disconnect();
+    }
+
     /**
      * Method used to send a message to the given target.
      *

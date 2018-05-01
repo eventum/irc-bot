@@ -54,6 +54,10 @@ class ServiceProvider implements ServiceProviderInterface
             return new UserDb();
         };
 
+        $app[ProcessControl::class] = function () {
+            return new ProcessControl();
+        };
+
         $app[IrcBot::class] = function ($app) {
             $commands = [
                 new Command\HelpCommand($app[IrcClient::class]),
@@ -82,9 +86,13 @@ class ServiceProvider implements ServiceProviderInterface
                     $app[EventumXmlRpcClient::class],
                     $app[Config::class]
                 ),
+                $app[ProcessControl::class],
             ];
 
-            return new IrcBot($app[Config::class], $app[IrcClient::class], $listeners);
+            return new IrcBot(
+                $app[IrcClient::class],
+                $app[ProcessControl::class],
+                $listeners);
         };
     }
 }
