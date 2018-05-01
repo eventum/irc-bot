@@ -13,27 +13,12 @@
 
 namespace Eventum\IrcBot\Command;
 
-use Eventum\IrcBot\IrcClient;
-use Eventum\IrcBot\UserDb;
-use Eventum\RPC\EventumXmlRpcClient;
 use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
 class AuthCommand extends BaseCommand
 {
-    /** @var UserDb */
-    private $userDb;
-    /** @var EventumXmlRpcClient */
-    private $rpcClient;
-
-    public function __construct(IrcClient $ircClient, UserDb $userDb, EventumXmlRpcClient $rpcClient)
-    {
-        parent::__construct($ircClient);
-        $this->userDb = $userDb;
-        $this->rpcClient = $rpcClient;
-    }
-
     /**
      * Format is "auth user@example.com password"
      *

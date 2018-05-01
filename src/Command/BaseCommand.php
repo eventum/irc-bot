@@ -14,15 +14,23 @@
 namespace Eventum\IrcBot\Command;
 
 use Eventum\IrcBot\IrcClient;
+use Eventum\IrcBot\UserDb;
+use Eventum\RPC\EventumXmlRpcClient;
 
 abstract class BaseCommand
 {
     /** @var IrcClient */
     protected $ircClient;
+    /** @var UserDb */
+    protected $userDb;
+    /** @var EventumXmlRpcClient */
+    protected $rpcClient;
 
-    public function __construct(IrcClient $ircClient)
+    public function __construct(IrcClient $ircClient, UserDb $userDb = null, EventumXmlRpcClient $rpcClient = null)
     {
         $this->ircClient = $ircClient;
+        $this->userDb = $userDb;
+        $this->rpcClient = $rpcClient;
     }
 
     protected function sendResponse($target, $response, $priority = SMARTIRC_MEDIUM)
