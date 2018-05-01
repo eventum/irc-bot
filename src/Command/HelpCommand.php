@@ -13,20 +13,11 @@
 
 namespace Eventum\IrcBot\Command;
 
-use Eventum\IrcBot\IrcClient;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
-class HelpCommand
+class HelpCommand extends BaseCommand
 {
-    /** @var IrcClient */
-    private $ircClient;
-
-    public function __construct(IrcClient $ircClient)
-    {
-        $this->ircClient = $ircClient;
-    }
-
     /**
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data

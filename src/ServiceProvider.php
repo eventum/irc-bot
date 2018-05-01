@@ -40,12 +40,17 @@ class ServiceProvider implements ServiceProviderInterface
             return new IrcClient($app[Net_SmartIRC::class], $app[Config::class]);
         };
 
+        $app[UserDb::class] = function () {
+            return new UserDb();
+        };
+
         $app[IrcBot::class] = function ($app) {
             $commands = [
                 new Command\HelpCommand($app[IrcClient::class]),
+                new Command\AuthCommand($app[IrcClient::class], $app[UserDb::class]),
             ];
             $listeners = [
-                new Event\NickChangeListener(new UserDb()),
+                new Event\NickChangeListener($app[UserDb::class]),
                 new Command\CommandSet($commands),
             ];
 
