@@ -35,6 +35,16 @@ class Channel
     }
 
     /**
+     * Returns true if this channel is tagged with category
+     * @param string $category
+     * @return bool
+     */
+    public function hasCategory($category)
+    {
+        return in_array($category, $this->categories, true);
+    }
+
+    /**
      * @param string|array $channel
      * @param string $default_category
      * @return self[]
@@ -50,7 +60,8 @@ class Channel
         } elseif (isset($channel[0]) and !is_array($channel[0])) {
             // old config with multiple channels
             $options = [];
-            foreach ($channel as $name) {
+            $channels = $channel;
+            foreach ($channels as $name) {
                 $options[$name] = [$default_category];
             }
         } else {

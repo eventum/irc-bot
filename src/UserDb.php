@@ -51,6 +51,16 @@ class UserDb
         return array_key_exists($nick, $this->db);
     }
 
+    public function findByEmail($email)
+    {
+        $key = array_search($email, $this->db, true);
+        if ($key !== false) {
+            return $key;
+        }
+
+        return null;
+    }
+
     public function all()
     {
         return $this->db;

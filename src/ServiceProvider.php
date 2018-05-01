@@ -74,8 +74,14 @@ class ServiceProvider implements ServiceProviderInterface
                 ),
             ];
             $listeners = [
-                new Event\NickChangeListener($app[UserDb::class]),
                 new Command\CommandSet($commands),
+                new Event\NickChangeListener($app[UserDb::class]),
+                new Event\EventumEventsListener(
+                    $app[IrcClient::class],
+                    $app[UserDb::class],
+                    $app[EventumXmlRpcClient::class],
+                    $app[Config::class]
+                ),
             ];
 
             return new IrcBot($app[Config::class], $app[IrcClient::class], $listeners);
