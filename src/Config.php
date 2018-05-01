@@ -54,6 +54,8 @@ class Config implements ArrayAccess, IteratorAggregate
                 'Default Project' => '#issues',
             ],
 
+            'debugLevel' => 0,
+
             'default_category' => 'default',
         ]);
 

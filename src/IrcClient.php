@@ -27,10 +27,10 @@ class IrcClient
     public function __construct(Net_SmartIRC $irc, Config $config)
     {
         $this->config = $config;
-        $this->irc = $this->configure($irc);
+        $this->irc = $this->configure($irc, $config);
     }
 
-    private function configure(Net_SmartIRC $irc)
+    private function configure(Net_SmartIRC $irc, Config $config)
     {
         // reconnect is poorly designed, do not use it
         // @see https://pear.php.net/bugs/bug.php?id=20974
@@ -46,6 +46,10 @@ class IrcClient
         // users are accessible via $irc->user array, i.e $irc->user['meebey']->host;
         $irc->setChannelSyncing(true);
         $irc->setUserSyncing(true);
+
+        if ($config['debugLevel']) {
+            $irc->setDebugLevel($config['debugLevel']);
+        }
 
         return $irc;
     }
