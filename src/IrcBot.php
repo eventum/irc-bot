@@ -20,15 +20,17 @@ class IrcBot
     /** @var IrcClient */
     private $ircClient;
 
-    public function __construct(Config $config, IrcClient $ircClient)
+    public function __construct(Config $config, IrcClient $ircClient, array $listeners)
     {
         $this->config = $config;
         $this->ircClient = $ircClient;
+        foreach ($listeners as $listener) {
+            $this->ircClient->register($listener);
+        }
     }
 
     public function run()
     {
-        $this->ircClient->register(new Event\NickChangeListener());
         $this->ircClient->connect();
         $this->ircClient->login();
         $this->ircClient->joinChannels();

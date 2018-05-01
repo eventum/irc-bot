@@ -41,7 +41,15 @@ class ServiceProvider implements ServiceProviderInterface
         };
 
         $app[IrcBot::class] = function ($app) {
-            return new IrcBot($app[Config::class], $app[IrcClient::class]);
+            $commands = [
+                new Command\HelpCommand($app[IrcClient::class]),
+            ];
+            $listeners = [
+                new Event\NickChangeListener(),
+                new Command\CommandSet($commands),
+            ];
+
+            return new IrcBot($app[Config::class], $app[IrcClient::class], $listeners);
         };
     }
 }

@@ -11,18 +11,22 @@
  * that were distributed with this source code.
  */
 
-namespace Eventum\IrcBot;
+namespace Eventum\IrcBot\Command;
 
+use Eventum\IrcBot\IrcClient;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
-/**
- * Class containing IRC Bot command handlers.
- *
- * All public final methods are taken as commands.
- */
-class BotCommands extends AbstractBotCommands
+class HelpCommand
 {
+    /** @var IrcClient */
+    private $ircClient;
+
+    public function __construct(IrcClient $ircClient)
+    {
+        $this->ircClient = $ircClient;
+    }
+
     /**
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data
@@ -33,9 +37,9 @@ class BotCommands extends AbstractBotCommands
             'help' => 'Display this usage',
         ];
 
-        $this->sendResponse($data->nick, 'This is the list of available commands:');
+        $this->ircClient->sendResponse($data->nick, 'This is the list of available commands:');
         foreach ($commands as $command => $description) {
-            $this->sendResponse($data->nick, "$command: $description");
+            $this->ircClient->sendResponse($data->nick, "$command: $description");
         }
     }
 }
