@@ -29,6 +29,7 @@ class HelpCommand extends BaseCommand
             'clock' => 'Format is "clock [in|out]"',
             'help' => 'Display this usage',
             'list-clocked-in' => 'Format is "list-clocked-in"',
+            'list-quarantined' => 'Format is "list-quarantined"',
         ];
 
         $this->sendResponse($data->nick, 'This is the list of available commands:');
