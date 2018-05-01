@@ -28,10 +28,14 @@ class EventumEventsListener implements EventListenerInterface
     protected $userDb;
     /** @var EventumXmlRpcClient */
     protected $rpcClient;
+    /** @var Config */
+    private $config;
     /** @var string */
     private $default_category;
     /** @var array */
-    private $channels;
+    private $channels = [];
+    /** @var array */
+    private $projects = [];
 
     public function __construct(
         IrcClient $ircClient,
@@ -43,17 +47,47 @@ class EventumEventsListener implements EventListenerInterface
         $this->userDb = $userDb;
         $this->rpcClient = $rpcClient;
         $this->default_category = $config['default_category'];
-        $this->channels = $config->getChannels();
+        $this->config = $config;
     }
 
     public function register(Net_SmartIRC $irc)
     {
+        $this->channels = $this->config->getChannels();
+
+        foreach (array_keys($this->channels) as $projectName) {
+            $project = $this->rpcClient->getProjectByName($projectName);
+            // skip inexistent projects
+            if (!$project) {
+                continue;
+            }
+            // skip inactive projects
+            if ($project['prj_status'] !== 'active' || $project['prj_remote_invocation'] !== 'enabled') {
+                continue;
+            }
+            $this->projects[$project['prj_id']] = $project;
+        }
+
+        if (!$this->projects) {
+            // skip notify if no projects enabled
+            return;
+        }
+
         $irc->registerTimeHandler(3000, $this, 'notifyEvents');
     }
 
     public function notifyEvents()
     {
-        foreach ($this->getPendingMessages() as $row) {
+        foreach (array_keys($this->projects) as $prj_id) {
+            $this->processMessages($prj_id);
+        }
+    }
+
+    /**
+     * @param int $prj_id
+     */
+    private function processMessages($prj_id)
+    {
+        foreach ($this->getPendingMessages($prj_id) as $row) {
             $row['ino_message'] = base64_decode($row['ino_message_base64']);
 
             if (!$row['ino_category']) {
@@ -67,7 +101,7 @@ class EventumEventsListener implements EventListenerInterface
                     $this->ircClient->sendResponse($nick, $row['ino_message']);
                 }
                 // FIXME: why mark it sent if user is not online?
-                $this->markEventSent($row['ino_id']);
+                $this->markEventSent($prj_id, $row['ino_id']);
                 continue;
             }
 
@@ -94,7 +128,7 @@ class EventumEventsListener implements EventListenerInterface
                     $this->ircClient->sendResponse($channel->name, $message);
                 }
             }
-            $this->markEventSent($row['ino_id']);
+            $this->markEventSent($prj_id, $row['ino_id']);
         }
     }
 
@@ -133,10 +167,14 @@ class EventumEventsListener implements EventListenerInterface
         return $projectNames;
     }
 
-    private function getPendingMessages()
+    /**
+     * @param int $prj_id
+     * @return array
+     */
+    private function getPendingMessages($prj_id)
     {
         try {
-            return $this->rpcClient->getPendingMessages(50);
+            return $this->rpcClient->getPendingMessages($prj_id, 50);
         } catch (XmlRpcException $e) {
             return [];
         }
@@ -144,12 +182,13 @@ class EventumEventsListener implements EventListenerInterface
 
     /**
      * Mark message as sent
+     * @param int $prj_id
      * @param int $ino_id
      */
-    private function markEventSent($ino_id)
+    private function markEventSent($prj_id, $ino_id)
     {
         try {
-            $this->rpcClient->markEventSent((int)$ino_id);
+            $this->rpcClient->markEventSent($prj_id, (int)$ino_id);
         } catch (XmlRpcException $e) {
         }
     }
