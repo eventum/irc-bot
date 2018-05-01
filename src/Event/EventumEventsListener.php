@@ -88,8 +88,6 @@ class EventumEventsListener implements EventListenerInterface
     private function processMessages($prj_id)
     {
         foreach ($this->getPendingMessages($prj_id) as $row) {
-            $row['ino_message'] = base64_decode($row['ino_message_base64']);
-
             if (!$row['ino_category']) {
                 $row['ino_category'] = $this->default_category;
             }
