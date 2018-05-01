@@ -16,6 +16,7 @@ namespace Eventum\IrcBot\Command;
 use Eventum\IrcBot\IrcClient;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
+use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
@@ -47,7 +48,13 @@ class QuarantinedIssueCommand extends BaseCommand
             return;
         }
 
-        $list = $this->rpcClient->getQuarantinedIssueList();
+        try {
+            $list = $this->rpcClient->getQuarantinedIssueList();
+        } catch (XmlRpcException $e) {
+            $this->sendResponse($data->nick, 'Error: Temporary error');
+
+            return;
+        }
 
         $count = count($list);
         if ($count === 0) {

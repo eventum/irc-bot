@@ -16,6 +16,7 @@ namespace Eventum\IrcBot\Command;
 use Eventum\IrcBot\IrcClient;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
+use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
@@ -68,7 +69,13 @@ class ClockInCommand extends BaseCommand
         $command = isset($data->messageex[1]) ? $data->messageex[1] : null;
 
         // XXX: the action will be performed as system user
-        $result = $this->rpcClient->timeClock($command);
+        try {
+            $result = $this->rpcClient->timeClock($command);
+        } catch (XmlRpcException $e) {
+            $this->sendResponse($data->nick, 'Error: Temporary error');
+
+            return;
+        }
 
         $this->sendResponse($data->nick, $result);
     }
@@ -87,7 +94,14 @@ class ClockInCommand extends BaseCommand
             return;
         }
 
-        $list = $this->rpcClient->getClockedInList();
+        try {
+            $list = $this->rpcClient->getClockedInList();
+        } catch (XmlRpcException $e) {
+            $this->sendResponse($data->nick, 'Error: Temporary error');
+
+            return;
+        }
+
         if (count($list) == 0) {
             $this->sendResponse($data->nick, 'There are no clocked-in users as of now.');
 
