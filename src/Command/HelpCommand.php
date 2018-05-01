@@ -29,9 +29,9 @@ class HelpCommand extends BaseCommand
             'help' => 'Display this usage',
         ];
 
-        $this->ircClient->sendResponse($data->nick, 'This is the list of available commands:');
+        $this->sendResponse($data->nick, 'This is the list of available commands:');
         foreach ($commands as $command => $description) {
-            $this->ircClient->sendResponse($data->nick, "$command: $description");
+            $this->sendResponse($data->nick, "$command: $description");
         }
     }
 }

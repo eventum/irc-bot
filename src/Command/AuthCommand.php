@@ -43,7 +43,7 @@ class AuthCommand extends BaseCommand
     final public function auth(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
         if (count($data->messageex) !== 3) {
-            $this->ircClient->sendResponse(
+            $this->sendResponse(
                 $data->nick,
                 'Error: wrong parameter count for "AUTH" command. Format is "!auth user@example.com password".'
             );
@@ -57,14 +57,14 @@ class AuthCommand extends BaseCommand
         try {
             $authenticated = $this->rpcClient->isValidLogin($email, $password);
         } catch (XmlRpcException $e) {
-            $this->ircClient->sendResponse($data->nick, 'Error: Temporary error');
+            $this->sendResponse($data->nick, 'Error: Temporary error');
 
             return;
         }
 
         // check if the given password is correct
         if (!$authenticated) {
-            $this->ircClient->sendResponse(
+            $this->sendResponse(
                 $data->nick, 'Error: The email address / password combination could not be found in the system.'
             );
 
@@ -72,7 +72,7 @@ class AuthCommand extends BaseCommand
         }
 
         $this->userDb->add($data->nick, $email);
-        $this->ircClient->sendResponse($data->nick, 'Thank you, you have been successfully authenticated.');
+        $this->sendResponse($data->nick, 'Thank you, you have been successfully authenticated.');
     }
 
     /**
@@ -81,9 +81,9 @@ class AuthCommand extends BaseCommand
      */
     final public function listAuth(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        $this->ircClient->sendResponse($data->nick, 'Showing authenticated users:');
+        $this->sendResponse($data->nick, 'Showing authenticated users:');
         foreach ($this->userDb->all() as $nickname => $email) {
-            $this->ircClient->sendResponse($data->nick, "$nickname => $email");
+            $this->sendResponse($data->nick, "$nickname => $email");
         }
     }
 }

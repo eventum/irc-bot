@@ -24,4 +24,9 @@ abstract class BaseCommand
     {
         $this->ircClient = $ircClient;
     }
+
+    protected function sendResponse($target, $response, $priority = SMARTIRC_MEDIUM)
+    {
+        $this->ircClient->sendResponse($target, $response, $priority);
+    }
 }
