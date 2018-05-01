@@ -22,9 +22,9 @@ class UserDb
      */
     private $db = [];
 
-    public function all()
+    public function add($nick, $email)
     {
-        return $this->db;
+        $this->db[$nick] = $email;
     }
 
     public function rename($old_nick, $new_nick)
@@ -44,5 +44,10 @@ class UserDb
         }
 
         unset($this->db[$nick]);
+    }
+
+    public function all()
+    {
+        return $this->db;
     }
 }

@@ -44,6 +44,11 @@ class Config implements ArrayAccess, IteratorAggregate
             'username' => '',
             'password' => '',
 
+            // Eventum XMLRPC access
+            'xmlrpc.url' => 'http://eventum.127.0.0.1.xip.io:8012/rpc/xmlrpc.php',
+            'xmlrpc.login' => 'admin@example.com',
+            'xmlrpc.token' => 'admin',
+
             // configured IRC channels
             'channels' => [
                 'Default Project' => '#issues',

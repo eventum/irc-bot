@@ -13,6 +13,7 @@
 
 namespace Eventum\IrcBot;
 
+use Eventum\RPC\EventumXmlRpcClient;
 use Net_SmartIRC;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -36,6 +37,15 @@ class ServiceProvider implements ServiceProviderInterface
             return new Config($app['config.path']);
         };
 
+        $app[EventumXmlRpcClient::class] = function ($app) {
+            $config = $app[Config::class];
+
+            $client = new EventumXmlRpcClient($config['xmlrpc.url']);
+            $client->setCredentials($config['xmlrpc.login'], $config['xmlrpc.token']);
+
+            return $client;
+        };
+
         $app[IrcClient::class] = function ($app) {
             return new IrcClient($app[Net_SmartIRC::class], $app[Config::class]);
         };
@@ -47,7 +57,11 @@ class ServiceProvider implements ServiceProviderInterface
         $app[IrcBot::class] = function ($app) {
             $commands = [
                 new Command\HelpCommand($app[IrcClient::class]),
-                new Command\AuthCommand($app[IrcClient::class], $app[UserDb::class]),
+                new Command\AuthCommand(
+                    $app[IrcClient::class],
+                    $app[UserDb::class],
+                    $app[EventumXmlRpcClient::class]
+                ),
             ];
             $listeners = [
                 new Event\NickChangeListener($app[UserDb::class]),

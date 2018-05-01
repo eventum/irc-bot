@@ -25,6 +25,7 @@ class HelpCommand extends BaseCommand
     final public function help(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
         $commands = [
+            'auth' => 'Format is "auth user@example.com password"',
             'help' => 'Display this usage',
         ];
 
