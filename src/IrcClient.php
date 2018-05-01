@@ -13,7 +13,7 @@
 
 namespace Eventum\IrcBot;
 
-use Eventum\IrcBot\BotCommands;
+use Eventum\IrcBot\Event\EventListenerInterface;
 use Net_SmartIRC;
 
 class IrcClient
@@ -85,6 +85,11 @@ class IrcClient
     public function listen()
     {
         $this->irc->listen();
+    }
+
+    public function register(EventListenerInterface $listener)
+    {
+        $listener->register($this->irc);
     }
 
     /**

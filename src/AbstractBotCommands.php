@@ -13,7 +13,6 @@
 
 namespace Eventum\IrcBot;
 
-use Eventum\IrcBot\IrcBot;
 use Net_SmartIRC;
 use ReflectionClass;
 use ReflectionMethod;

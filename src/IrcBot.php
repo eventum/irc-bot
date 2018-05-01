@@ -28,6 +28,7 @@ class IrcBot
 
     public function run()
     {
+        $this->ircClient->register(new Event\NickChangeListener());
         $this->ircClient->connect();
         $this->ircClient->login();
         $this->ircClient->joinChannels();
