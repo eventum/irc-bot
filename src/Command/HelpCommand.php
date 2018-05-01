@@ -28,6 +28,7 @@ class HelpCommand extends BaseCommand
             'auth' => 'Format is "auth user@example.com password"',
             'clock' => 'Format is "clock [in|out]"',
             'help' => 'Display this usage',
+            'list-clocked-in' => 'Format is "list-clocked-in"',
         ];
 
         $this->sendResponse($data->nick, 'This is the list of available commands:');

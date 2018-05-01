@@ -72,4 +72,31 @@ class ClockInCommand extends BaseCommand
 
         $this->sendResponse($data->nick, $result);
     }
+
+    /**
+     * Format is "list-clocked-in"
+     *
+     * @param Net_SmartIRC $irc
+     * @param Net_SmartIRC_data $data
+     */
+    final public function listClockedIn(Net_SmartIRC $irc, Net_SmartIRC_data $data)
+    {
+        if (!$this->userDb->has($data->nick)) {
+            $this->sendResponse($data->nick, 'Error: You need to be authenticated to run this command.');
+
+            return;
+        }
+
+        $list = $this->rpcClient->getClockedInList();
+        if (count($list) == 0) {
+            $this->sendResponse($data->nick, 'There are no clocked-in users as of now.');
+
+            return;
+        }
+
+        $this->sendResponse($data->nick, 'The following is the list of clocked-in users:');
+        foreach ($list as $name => $email) {
+            $this->sendResponse($data->nick, "$name: $email");
+        }
+    }
 }
