@@ -45,7 +45,7 @@ class ServiceProvider implements ServiceProviderInterface
                 new Command\HelpCommand($app[IrcClient::class]),
             ];
             $listeners = [
-                new Event\NickChangeListener(),
+                new Event\NickChangeListener(new UserDb()),
                 new Command\CommandSet($commands),
             ];
 

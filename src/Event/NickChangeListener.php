@@ -13,17 +13,19 @@
 
 namespace Eventum\IrcBot\Event;
 
+use Eventum\IrcBot\UserDb;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 
 class NickChangeListener implements EventListenerInterface
 {
-    /**
-     * List of authenticated users
-     *
-     * @var array
-     */
-    private $auth = [];
+    /** @var UserDb */
+    private $userdb;
+
+    public function __construct(UserDb $userdb)
+    {
+        $this->userdb = $userdb;
+    }
 
     public function register(Net_SmartIRC $irc)
     {
@@ -42,15 +44,7 @@ class NickChangeListener implements EventListenerInterface
      */
     public function updateAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        if (!array_key_exists($data->nick, $this->auth)) {
-            return;
-        }
-
-        $old_nick = $data->nick;
-        $new_nick = $data->message;
-
-        $this->auth[$new_nick] = $this->auth[$old_nick];
-        unset($this->auth[$old_nick]);
+        $this->userdb->rename($data->nick, $data->message);
     }
 
     /**
@@ -61,10 +55,6 @@ class NickChangeListener implements EventListenerInterface
      */
     public function removeAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        if (!array_key_exists($data->nick, $this->auth)) {
-            return;
-        }
-
-        unset($this->auth[$data->nick]);
+        $this->userdb->remove($data->nick);
     }
 }
