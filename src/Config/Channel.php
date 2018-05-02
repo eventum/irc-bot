@@ -13,6 +13,8 @@
 
 namespace Eventum\IrcBot\Config;
 
+use Eventum\IrcBot\Entity\Project;
+
 class Channel
 {
     /** @var string */
@@ -21,6 +23,8 @@ class Channel
     public $key;
     /** @var string[] */
     public $categories;
+    /** @var Project[] */
+    private $projects;
 
     public function __construct($channelName, array $categories)
     {
@@ -32,6 +36,29 @@ class Channel
             $this->name = $channelName;
         }
         $this->categories = $categories;
+    }
+
+    public function addProject(Project $project)
+    {
+        $this->projects[$project->getId()] = $project;
+
+        return $this;
+    }
+
+    /**
+     * @return Project[]
+     */
+    public function getProjects()
+    {
+        return $this->projects;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProjectCount()
+    {
+        return count($this->projects);
     }
 
     /**
