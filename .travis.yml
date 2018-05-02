@@ -2,6 +2,9 @@ language: php
 sudo: required
 dist: trusty
 
+env:
+  - PROJECT_NAME=irc-bot
+
 jobs:
   include:
     - php: "5.6"
@@ -18,11 +21,12 @@ cache:
 
 script:
   - composer install --no-dev -a
-  - composer archive --format=tar --file=irc-bot
-  - tar tvf irc-bot.tar
+  - composer archive --format=tar --file=$PROJECT_NAME
+  - tar tvf $PROJECT_NAME.tar
 
 before_deploy:
-  - xz -9 irc-bot.tar
+  - xz -9 $PROJECT_NAME.tar
+  - mv $PROJECT_NAME.tar.xz $PROJECT_NAME-$TRAVIS_TAG.tar.xz
 
 deploy:
   provider: releases
@@ -34,7 +38,7 @@ deploy:
   api_key: $GITHUB_API_TOKEN
   file_glob: true
   file:
-    - irc-bot-*.tar.xz
+    - $PROJECT_NAME-*.tar.xz
   skip_cleanup: true
   overwrite: true
   on:
