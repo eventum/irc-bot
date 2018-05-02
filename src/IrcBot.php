@@ -13,7 +13,7 @@
 
 namespace Eventum\IrcBot;
 
-use Eventum\IrcBot\Config\Channel;
+use Eventum\IrcBot\Entity\Channel;
 use Eventum\IrcBot\Event\EventListenerInterface;
 use Net_SmartIRC;
 

@@ -14,7 +14,7 @@
 namespace Eventum\IrcBot;
 
 use ArrayAccess;
-use Eventum\IrcBot\Config\Channel;
+use Eventum\IrcBot\Entity\Channel;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Symfony\Component\OptionsResolver\OptionsResolver;

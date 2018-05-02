@@ -14,7 +14,6 @@
 namespace Eventum\IrcBot\Entity;
 
 use ArrayAccess;
-use Eventum\IrcBot\Config\Channel;
 use Eventum\IrcBot\OptionsArrayAccessTrait;
 use IteratorAggregate;
 use Net_SmartIRC;

@@ -11,9 +11,7 @@
  * that were distributed with this source code.
  */
 
-namespace Eventum\IrcBot\Config;
-
-use Eventum\IrcBot\Entity\Project;
+namespace Eventum\IrcBot\Entity;
 
 class Channel
 {

@@ -15,6 +15,7 @@ namespace Eventum\IrcBot\Event;
 
 use Eventum\IrcBot\Command\BaseCommand;
 use Eventum\IrcBot\Config;
+use Eventum\IrcBot\Entity\Channel;
 use Eventum\IrcBot\Entity\Project;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
@@ -70,7 +71,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                 continue;
             }
             $project->setChannels($channels);
-            /** @var Config\Channel $channel */
+            /** @var Channel $channel */
             foreach ($channels as $channel) {
                 $channel->addProject($project);
             }
@@ -114,7 +115,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                 continue;
             }
 
-            /** @var Config\Channel $channel */
+            /** @var Channel $channel */
             foreach ($channels as $channel) {
                 $message = $row['ino_message'];
                 if (isset($row['issue_url'])) {
