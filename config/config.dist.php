@@ -56,7 +56,12 @@ return [
      *
      * @see Net_SmartIRC::setDebugLevel
      */
-//    'debugLevel' => SMARTIRC_DEBUG_NOTICE
+    // debug everything
+//    'debugLevel' => SMARTIRC_DEBUG_ALL,
+
+    // or bit flag of individual categories
+//    'debugLevel' => SMARTIRC_DEBUG_NONE
+//        | SMARTIRC_DEBUG_NOTICE
 //        | SMARTIRC_DEBUG_CONNECTION
 //        | SMARTIRC_DEBUG_SOCKET
 //        | SMARTIRC_DEBUG_IRCMESSAGES
@@ -67,6 +72,9 @@ return [
 //        | SMARTIRC_DEBUG_CHANNELSYNCING
 //        | SMARTIRC_DEBUG_MODULES
 //        | SMARTIRC_DEBUG_USERSYNCING
+//        | SMARTIRC_DEBUG_MESSAGEPARSER
+//        | SMARTIRC_DEBUG_DCC
+//    ,
 
     // SmartIRC logger, defaults to stdout
 //    'logging.smartirc' => 'irc_bot_smartirc.log',
