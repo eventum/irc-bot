@@ -23,6 +23,9 @@ class Config implements ArrayAccess, IteratorAggregate
 {
     use OptionsArrayAccessTrait;
 
+    /** @var Channel[] */
+    private $channels;
+
     public function __construct($configPath)
     {
         $options = $this->loadConfig($configPath);
@@ -38,13 +41,55 @@ class Config implements ArrayAccess, IteratorAggregate
      */
     public function getChannels()
     {
+        if ($this->channels === null) {
+            $this->channels = $this->resolveChannels();
+        }
+
+        return $this->channels;
+    }
+
+    private function resolveChannels()
+    {
         $channels = [];
-        // map project_id => channel(s)
+        // map project_id => channel objects
         foreach ($this['channels'] as $project_name => $options) {
-            $channels[$project_name] = Channel::createChannels($options, $this['default_category']);
+            $channels[$project_name] = $this->createChannels($options, $this['default_category']);
         }
 
         return $channels;
+    }
+
+    /**
+     * @param string|array $definition
+     * @param string $default_category
+     * @return self[]
+     */
+    private function createChannels($definition, $default_category)
+    {
+        // we need to map old configs with just channels to new config with categories as well
+        if (!is_array($definition)) {
+            // old config, one channel
+            $options = [
+                $definition => [$default_category],
+            ];
+        } elseif (isset($definition[0]) and !is_array($definition[0])) {
+            // old config with multiple channels
+            $options = [];
+            $channels = $definition;
+            foreach ($channels as $name) {
+                $options[$name] = [$default_category];
+            }
+        } else {
+            // new format
+            $options = $definition;
+        }
+
+        $res = [];
+        foreach ($options as $name => $categories) {
+            $res[] = new Channel($name, $categories);
+        }
+
+        return $res;
     }
 
     private function configureOptions(OptionsResolver $resolver)
