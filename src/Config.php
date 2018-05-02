@@ -15,6 +15,7 @@ namespace Eventum\IrcBot;
 
 use ArrayAccess;
 use Eventum\IrcBot\Config\Channel;
+use InvalidArgumentException;
 use IteratorAggregate;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -79,6 +80,10 @@ class Config implements ArrayAccess, IteratorAggregate
 
     private function loadConfig($configPath)
     {
+        if (!is_readable($configPath)) {
+            throw new InvalidArgumentException("Config file {$configPath} is not readable");
+        }
+
         return require $configPath;
     }
 }
