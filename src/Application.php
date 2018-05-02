@@ -17,6 +17,8 @@ use Pimple\Container;
 
 class Application extends Container
 {
+    const VERSION = '1.0.0';
+
     public function __construct(array $values = [])
     {
         parent::__construct($values);

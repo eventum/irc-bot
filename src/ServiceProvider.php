@@ -42,6 +42,7 @@ class ServiceProvider implements ServiceProviderInterface
 
             $client = new EventumXmlRpcClient($config['xmlrpc.url']);
             $client->setCredentials($config['xmlrpc.login'], $config['xmlrpc.token']);
+            $client->addUserAgent('EventumIRC/' . Application::VERSION);
 
             return $client;
         };
