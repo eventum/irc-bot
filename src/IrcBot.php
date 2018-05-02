@@ -66,6 +66,12 @@ class IrcBot
             $irc->setLogDestination(SMARTIRC_FILE);
             $irc->setLogFile($config['logging.smartirc']);
         }
+
+        if ($config['logging.errorlog']) {
+            // this will redirect stderr to a logfile
+            ini_set('log_errors', 'On');
+            ini_set('error_log', $config['logging.errorlog']);
+        }
     }
 
     private function login(Net_SmartIRC $irc, Config $config)

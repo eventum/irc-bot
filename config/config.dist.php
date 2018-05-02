@@ -71,5 +71,8 @@ return [
     // SmartIRC logger, defaults to stdout
 //    'logging.smartirc' => 'irc_bot_smartirc.log',
 
+    // PHP error logs, defaults to php.ini defaults
+//    'logging.errorlog' => 'irc_bot_error.log',
+
     'default_category' => 'default',
 ];
