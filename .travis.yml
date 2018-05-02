@@ -20,6 +20,8 @@ script:
   - composer install --no-dev -a
   - composer archive --format=tar --file=irc-bot
   - tar tvf irc-bot.tar
+
+before_deploy:
   - xz -9 irc-bot.tar
 
 deploy:
@@ -37,6 +39,7 @@ deploy:
   overwrite: true
   on:
     repo: eventum/irc-bot
+    php: '5.6'
     tags: true
 
 # vim:ts=2:sw=2:et
