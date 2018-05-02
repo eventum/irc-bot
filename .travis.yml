@@ -16,4 +16,9 @@ cache:
     - $HOME/.composer/cache
     - vendor
 
+script:
+  - composer install --no-dev -a
+  - composer archive --format=tar --file=irc-bot
+  - tar tvf irc-bot.tar
+
 # vim:ts=2:sw=2:et
