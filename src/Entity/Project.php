@@ -50,7 +50,7 @@ class Project implements ArrayAccess, IteratorAggregate
 
     public function getId()
     {
-        return $this['prj_id'];
+        return (int)$this['prj_id'];
     }
 
     public function setChannels($channels)
