@@ -13,6 +13,8 @@
 
 namespace Eventum\IrcBot\Entity;
 
+use Eventum\RPC\EventumXmlRpcClient;
+
 class User
 {
     /** @var string */
@@ -27,6 +29,18 @@ class User
         $this->login = $login;
         $this->nick = $nick;
         $this->token = $token;
+    }
+
+    /**
+     * @param EventumXmlRpcClient $client
+     * @return EventumXmlRpcClient
+     */
+    public function getXmlRpcClient(EventumXmlRpcClient $client)
+    {
+        $cloned = clone $client;
+        $cloned->setCredentials($this->login, $this->token);
+
+        return $cloned;
     }
 
     public function __toString()

@@ -56,7 +56,7 @@ class ClockInCommand extends BaseCommand
 
         // XXX: the action will be performed as system user
         try {
-            $result = $this->rpcClient->timeClock($command);
+            $result = $user->getXmlRpcClient($this->rpcClient)->timeClock($command);
         } catch (XmlRpcException $e) {
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
@@ -82,7 +82,7 @@ class ClockInCommand extends BaseCommand
         }
 
         try {
-            $list = $this->rpcClient->getClockedInList();
+            $list = $user->getXmlRpcClient($this->rpcClient)->getClockedInList();
         } catch (XmlRpcException $e) {
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
