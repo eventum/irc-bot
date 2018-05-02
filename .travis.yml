@@ -20,5 +20,23 @@ script:
   - composer install --no-dev -a
   - composer archive --format=tar --file=irc-bot
   - tar tvf irc-bot.tar
+  - xz -9 irc-bot.tar
+
+deploy:
+  provider: releases
+  # https://docs.travis-ci.com/user/deployment/releases/
+  # Create token with privilege in https://github.com/settings/tokens and set as env var.
+  # It must have the public_repo or repo scope to upload assets
+  # $ travis env set -p GITHUB_API_TOKEN abcdefabcdefabcdef
+  # or via https://travis-ci.org/eventum/irc-bot/settings
+  api_key: $GITHUB_API_TOKEN
+  file_glob: true
+  file:
+    - irc-bot-*.tar.xz
+  skip_cleanup: true
+  overwrite: true
+  on:
+    repo: eventum/irc-bot
+    tags: true
 
 # vim:ts=2:sw=2:et
