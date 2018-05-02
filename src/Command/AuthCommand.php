@@ -13,6 +13,7 @@
 
 namespace Eventum\IrcBot\Command;
 
+use Eventum\IrcBot\Entity\User;
 use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
@@ -56,7 +57,8 @@ class AuthCommand extends BaseCommand
             return;
         }
 
-        $this->userDb->add($data->nick, $email);
+        $user = new User($email, $password, $data->nick);
+        $this->userDb->add($user);
         $this->sendResponse($data->nick, 'Thank you, you have been successfully authenticated.');
     }
 
@@ -67,8 +69,8 @@ class AuthCommand extends BaseCommand
     final public function listAuth(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
         $this->sendResponse($data->nick, 'Showing authenticated users:');
-        foreach ($this->userDb->all() as $nickname => $email) {
-            $this->sendResponse($data->nick, "$nickname => $email");
+        foreach ($this->userDb->all() as $user) {
+            $this->sendResponse($data->nick, (string)$user);
         }
     }
 }

@@ -27,7 +27,8 @@ class QuarantinedIssueCommand extends BaseCommand
      */
     final public function listQuarantined(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        if (!$this->userDb->has($data->nick)) {
+        $user = $this->userDb->findByNick($data->nick);
+        if (!$user) {
             $this->sendResponse($data->nick, 'Error: You need to be authenticated to run this command.');
 
             return;

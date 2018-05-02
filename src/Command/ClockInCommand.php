@@ -27,7 +27,8 @@ class ClockInCommand extends BaseCommand
      */
     final public function clock(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        if (!$this->userDb->has($data->nick)) {
+        $user = $this->userDb->findByNick($data->nick);
+        if (!$user) {
             $this->sendResponse($data->nick, 'Error: You need to be authenticated to run this command.');
 
             return;
@@ -55,7 +56,7 @@ class ClockInCommand extends BaseCommand
 
         // XXX: the action will be performed as system user
         try {
-            $result = $this->rpcClient->timeClock($command);
+            $result = $user->getXmlRpcClient($this->rpcClient)->timeClock($command);
         } catch (XmlRpcException $e) {
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
@@ -73,14 +74,15 @@ class ClockInCommand extends BaseCommand
      */
     final public function listClockedIn(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        if (!$this->userDb->has($data->nick)) {
+        $user = $this->userDb->findByNick($data->nick);
+        if (!$user) {
             $this->sendResponse($data->nick, 'Error: You need to be authenticated to run this command.');
 
             return;
         }
 
         try {
-            $list = $this->rpcClient->getClockedInList();
+            $list = $user->getXmlRpcClient($this->rpcClient)->getClockedInList();
         } catch (XmlRpcException $e) {
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
