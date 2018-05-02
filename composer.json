@@ -13,8 +13,13 @@
             ".*",
             "Tests",
             "composer.*",
+            "demo",
+            "doc",
             "docs",
             "ext",
+            "extras",
+            "phpxmlrpc/debugger",
+            "phpxmlrpc/lib",
             "tests"
         ]
     },
