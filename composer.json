@@ -6,6 +6,18 @@
         },
         "sort-packages": true
     },
+    "archive": {
+        "exclude": [
+            "*.dist",
+            "*.tar",
+            ".*",
+            "Tests",
+            "composer.*",
+            "docs",
+            "ext",
+            "tests"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Eventum\\IrcBot\\": "src/"
