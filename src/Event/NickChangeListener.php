@@ -44,7 +44,12 @@ class NickChangeListener implements EventListenerInterface
      */
     public function updateAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        $this->userdb->rename($data->nick, $data->message);
+        $user = $this->userdb->findByNick($data->nick);
+        if (!$user) {
+            return;
+        }
+
+        $user->nick = $data->message;
     }
 
     /**
@@ -55,6 +60,11 @@ class NickChangeListener implements EventListenerInterface
      */
     public function removeAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        $this->userdb->remove($data->nick);
+        $user = $this->userdb->findByNick($data->nick);
+        if (!$user) {
+            return;
+        }
+
+        $this->userdb->remove($user);
     }
 }

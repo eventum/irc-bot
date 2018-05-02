@@ -13,56 +13,65 @@
 
 namespace Eventum\IrcBot;
 
+use Eventum\IrcBot\Entity\User;
+use InvalidArgumentException;
+use SplObjectStorage;
+
 class UserDb
 {
-    /**
-     * List of authenticated users
-     *
-     * @var array
-     */
-    private $db = [];
+    /** @var User[] */
+    private $db;
 
-    public function add($nick, $email)
+    public function __construct()
     {
-        $this->db[$nick] = $email;
+        $this->db = new SplObjectStorage();
     }
 
-    public function rename($old_nick, $new_nick)
+    public function add(User $user)
     {
-        if (!array_key_exists($old_nick, $this->db)) {
-            return;
+        if ($this->db->contains($user)) {
+            throw new InvalidArgumentException("User already exists: {$user}");
+        }
+        $this->db->attach($user);
+
+        return $this;
+    }
+
+    public function remove(User $user)
+    {
+        if (!$this->db->contains($user)) {
+            throw new InvalidArgumentException("User not present: {$user}");
         }
 
-        $this->db[$new_nick] = $this->db[$old_nick];
-        unset($this->db[$old_nick]);
-    }
+        $this->db->detach($user);
 
-    public function remove($nick)
-    {
-        if (!array_key_exists($nick, $this->db)) {
-            return;
-        }
-
-        unset($this->db[$nick]);
-    }
-
-    public function has($nick)
-    {
-        return array_key_exists($nick, $this->db);
-    }
-
-    public function findByEmail($email)
-    {
-        $key = array_search($email, $this->db, true);
-        if ($key !== false) {
-            return $key;
-        }
-
-        return null;
+        return $this;
     }
 
     public function all()
     {
         return $this->db;
+    }
+
+    public function findByEmail($email)
+    {
+        foreach ($this->db as $user) {
+            if ($user->email === $email) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    public function findByNick($nick)
+    {
+        foreach ($this->db as $user) {
+            if ($user->nick === $nick) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 }
