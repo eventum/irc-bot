@@ -35,26 +35,35 @@ preferences, such as the IRC server and channel that the bot should join. An
 example setup file can be found in
 [config/config.dist.php](config/config.dist.php)
 
+### Channels setting
+
 - `channels` : This array lists what channels belong to what projects, so the bot can be of use to several different projects, as long as they are on the same IRC network. You can also have more than one channel per project, like this:
 ```php
-    'channels' => array(
-        'Default Project' => array(
+    'channels' => [
+        'Default Project' => [
             '#issues', '#myIssues ThisIsMyPassword'
-        ),
+        ],
         'My Second Project' => '#moreissues',
-    ),
+    ],
 ```
+
+### IRC server settings
 - `'hostname'` : This variable holds the hostname or IP of the IRC server. Examples are `irc.freenode.net` or `localhost` if you use a private one hosted on the same server as Eventum.
-- `'port'` : The port number for the IRC server. Default is 6667.
+- `'port'` : The port number for the IRC server. Default is `6667`.
 - `'nickname'` : The nickname you want the bot to use. This has to be unique.
 - `'realname'` : What the bot will identify itself as if anyone executes a WHOIS command on it.
 - `'username'` : You MUST fill in this variable, even if the server is not restricted. Anything goes here, unless you have been given a username/password by the server administrator.
 - `'password'` : Same as for `'username'`.
 
+### Eventum XMLRPC access
+- `'xmlrpc.url'` : Address to Eventum XMLRPC. Example `http://localhost:8012/rpc/xmlrpc.php`
+- `'xmlrpc.login'` : Eventum user with Admin privileges, Example `admin@example.com`
+- `'xmlrpc.token'`  : Token or password for the admin user.
+
 When done, it might look something like this...
 
 ```php
-return array(
+return [
     /// connection parameters
     // IRC server address
     'hostname' => 'irc.tvt.mine.nu',
@@ -70,10 +79,15 @@ return array(
     // configured IRC channels
     'channels' => array(
         'TvT2' => array(
-            '#tvt-dev aPassword',
+            '#tvt-dev channel-key',
         ),
     ),
-);
+
+    // Eventum XMLRPC access
+    'xmlrpc.url' => 'http://localhost/rpc/xmlrpc.php',
+    'xmlrpc.login' => 'admin@example.com',
+    'xmlrpc.token' => 'admin',
+];
 ```
 
 To invoke the notification bot and let it run on the server, run this command:
