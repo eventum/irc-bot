@@ -49,9 +49,21 @@ class Project implements ArrayAccess, IteratorAggregate
         return $this['prj_status'] === 'active' && $this['prj_remote_invocation'] === 'enabled';
     }
 
+    public function getId()
+    {
+        return $this['prj_id'];
+    }
+
     public function setChannels($channels)
     {
         $this->channels = $channels;
+
+        return $this;
+    }
+
+    public function getChannels()
+    {
+        return $this->channels;
     }
 
     /**

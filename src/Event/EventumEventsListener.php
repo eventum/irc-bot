@@ -70,6 +70,10 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                 continue;
             }
             $project->setChannels($channels);
+            /** @var Config\Channel $channel */
+            foreach ($channels as $channel) {
+                $channel->addProject($project);
+            }
             $projects[$project['prj_id']] = $project;
         }
 
@@ -78,20 +82,17 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
 
     public function notifyEvents(Net_SmartIRC $irc)
     {
-        foreach ($this->projects as $prj_id => $project) {
+        foreach ($this->projects as $project) {
             if (!$project->anyChannelJoined($irc)) {
                 continue;
             }
-            $this->processMessages($prj_id);
+            $this->processMessages($project);
         }
     }
 
-    /**
-     * @param int $prj_id
-     */
-    private function processMessages($prj_id)
+    private function processMessages(Project $project)
     {
-        foreach ($this->getPendingMessages($prj_id) as $row) {
+        foreach ($this->getPendingMessages($project) as $row) {
             if (!$row['ino_category']) {
                 $row['ino_category'] = $this->default_category;
             }
@@ -103,12 +104,13 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                     $this->sendResponse($nick, $row['ino_message']);
                 }
                 // FIXME: why mark it sent if user is not online?
-                $this->markEventSent($prj_id, $row['ino_id']);
+                $this->markEventSent($project, $row['ino_id']);
                 continue;
             }
 
-            $channels = $this->getChannels($row['project_name']);
+            $channels = $project->getChannels();
             if (!$channels) {
+                // XXX: how?
                 continue;
             }
 
@@ -121,7 +123,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                     $message .= ' - ' . $row['emails_url'];
                 }
 
-                if (count($this->getProjectsForChannel($channel->name)) > 1) {
+                if ($channel->getProjectCount() > 1) {
                     // if multiple projects display in the same channel, display project in message
                     $message = '[' . $row['project_name'] . '] ' . $message;
                 }
@@ -130,53 +132,18 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
                     $this->sendResponse($channel->name, $message);
                 }
             }
-            $this->markEventSent($prj_id, $row['ino_id']);
+            $this->markEventSent($project, $row['ino_id']);
         }
     }
 
     /**
-     * Get IRC Channels for project name
-     * @param string $projectName
+     * @param Project $project
      * @return array
      */
-    private function getChannels($projectName)
-    {
-        if (isset($this->channels[$projectName])) {
-            return $this->channels[$projectName];
-        }
-
-        return [];
-    }
-
-    /**
-     * Helper method to the project names a channel displays messages for.
-     *
-     * @param   string $channelName The name of the channel
-     * @return  array The projects displayed in the channel
-     */
-    private function getProjectsForChannel($channelName)
-    {
-        $projectNames = [];
-        foreach ($this->channels as $projectName => $channels) {
-            /** @var Config\Channel $channel */
-            foreach ($channels as $channel) {
-                if ($channel->name === $channelName) {
-                    $projectNames[] = $projectName;
-                }
-            }
-        }
-
-        return $projectNames;
-    }
-
-    /**
-     * @param int $prj_id
-     * @return array
-     */
-    private function getPendingMessages($prj_id)
+    private function getPendingMessages(Project $project)
     {
         try {
-            return $this->rpcClient->getPendingMessages($prj_id, 50);
+            return $this->rpcClient->getPendingMessages($project->getId(), 50);
         } catch (XmlRpcException $e) {
             return [];
         }
@@ -184,13 +151,14 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
 
     /**
      * Mark message as sent
-     * @param int $prj_id
+     *
+     * @param Project $project
      * @param int $ino_id
      */
-    private function markEventSent($prj_id, $ino_id)
+    private function markEventSent(Project $project, $ino_id)
     {
         try {
-            $this->rpcClient->markEventSent($prj_id, (int)$ino_id);
+            $this->rpcClient->markEventSent($project->getId(), (int)$ino_id);
         } catch (XmlRpcException $e) {
         }
     }
