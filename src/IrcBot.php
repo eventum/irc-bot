@@ -61,6 +61,11 @@ class IrcBot
         if ($config['debugLevel']) {
             $irc->setDebugLevel($config['debugLevel']);
         }
+
+        if ($config['logging.smartirc']) {
+            $irc->setLogDestination(SMARTIRC_FILE);
+            $irc->setLogFile($config['logging.smartirc']);
+        }
     }
 
     private function login(Net_SmartIRC $irc, Config $config)

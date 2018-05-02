@@ -68,5 +68,8 @@ return [
 //        | SMARTIRC_DEBUG_MODULES
 //        | SMARTIRC_DEBUG_USERSYNCING
 
+    // SmartIRC logger, defaults to stdout
+//    'logging.smartirc' => 'irc_bot_smartirc.log',
+
     'default_category' => 'default',
 ];

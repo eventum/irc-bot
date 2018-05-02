@@ -117,6 +117,9 @@ class Config implements ArrayAccess, IteratorAggregate
 
             'debugLevel' => 0,
 
+            // SmartIRC logger
+            'logging.smartirc' => null,
+
             'default_category' => 'default',
         ]);
 
