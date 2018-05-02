@@ -25,8 +25,9 @@ script:
   - tar tvf $PROJECT_NAME.tar
 
 before_deploy:
-  - xz -9 $PROJECT_NAME.tar
-  - mv $PROJECT_NAME.tar.xz $PROJECT_NAME-$TRAVIS_TAG.tar.xz
+  - install -d $PROJECT_NAME-$TRAVIS_TAG
+  - tar -xf $PROJECT_NAME.tar -C $PROJECT_NAME-$TRAVIS_TAG
+  - tar cJf $PROJECT_NAME-$TRAVIS_TAG.tar.xz $PROJECT_NAME-$TRAVIS_TAG
 
 deploy:
   provider: releases
