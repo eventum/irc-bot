@@ -75,7 +75,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
             foreach ($channels as $channel) {
                 $channel->addProject($project);
             }
-            $projects[$project['prj_id']] = $project;
+            $projects[$project->getId()] = $project;
         }
 
         return $projects;

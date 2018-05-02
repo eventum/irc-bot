@@ -23,7 +23,7 @@ class CommandSet implements EventListenerInterface
     /** @var array */
     private $commands;
 
-    public function __construct($commands)
+    public function __construct(array $commands)
     {
         $this->commands = $commands;
     }
