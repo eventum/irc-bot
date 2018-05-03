@@ -14,8 +14,7 @@
 namespace Eventum\IrcBot\Command;
 
 use Eventum\IrcBot\Event\EventListenerInterface;
-use Eventum\IrcBot\ParseDocCommentTrait;
-use Eventum\IrcBot\SendResponseTrait;
+use Eventum\IrcBot\Traits;
 use Net_SmartIRC;
 use Net_SmartIRC_data;
 use ReflectionClass;
@@ -23,8 +22,8 @@ use ReflectionMethod;
 
 class CommandSet implements EventListenerInterface
 {
-    use SendResponseTrait;
-    use ParseDocCommentTrait;
+    use Traits\SendResponseTrait;
+    use Traits\ParseDocCommentTrait;
 
     /** @var array */
     private $commands;

@@ -14,14 +14,14 @@
 namespace Eventum\IrcBot\Entity;
 
 use ArrayAccess;
-use Eventum\IrcBot\OptionsArrayAccessTrait;
+use Eventum\IrcBot\Traits;
 use IteratorAggregate;
 use Net_SmartIRC;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Project implements ArrayAccess, IteratorAggregate
 {
-    use OptionsArrayAccessTrait;
+    use Traits\OptionsArrayAccessTrait;
 
     const KEYS = [
         'prj_id' => null,

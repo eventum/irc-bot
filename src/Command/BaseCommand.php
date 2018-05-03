@@ -13,8 +13,7 @@
 
 namespace Eventum\IrcBot\Command;
 
-use Eventum\IrcBot\SendResponseTrait;
-use Eventum\IrcBot\Traits\LoggerTrait;
+use Eventum\IrcBot\Traits;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Net_SmartIRC;
@@ -22,8 +21,8 @@ use Psr\Log\LoggerInterface;
 
 abstract class BaseCommand
 {
-    use SendResponseTrait;
-    use LoggerTrait;
+    use Traits\SendResponseTrait;
+    use Traits\LoggerTrait;
 
     /** @var UserDb */
     protected $userDb;

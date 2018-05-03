@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Config implements ArrayAccess, IteratorAggregate
 {
-    use OptionsArrayAccessTrait;
+    use Traits\OptionsArrayAccessTrait;
 
     /** @var Channel[] */
     private $channels;

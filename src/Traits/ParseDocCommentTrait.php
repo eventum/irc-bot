@@ -11,7 +11,7 @@
  * that were distributed with this source code.
  */
 
-namespace Eventum\IrcBot;
+namespace Eventum\IrcBot\Traits;
 
 trait ParseDocCommentTrait
 {
