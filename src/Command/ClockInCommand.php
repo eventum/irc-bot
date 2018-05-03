@@ -20,10 +20,9 @@ use Net_SmartIRC_data;
 class ClockInCommand extends BaseCommand
 {
     /**
-     * Format is "clock [in|out]"
-     *
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data
+     * @usage Format is "clock [in|out]"
      */
     final public function clock(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
@@ -67,10 +66,9 @@ class ClockInCommand extends BaseCommand
     }
 
     /**
-     * Format is "list-clocked-in"
-     *
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data
+     * @usage Format is "list-clocked-in"
      */
     final public function listClockedIn(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {

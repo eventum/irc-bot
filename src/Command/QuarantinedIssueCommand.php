@@ -20,10 +20,9 @@ use Net_SmartIRC_data;
 class QuarantinedIssueCommand extends BaseCommand
 {
     /**
-     * Format is "list-quarantined"
-     *
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data
+     * @usage Format is "list-quarantined"
      */
     final public function listQuarantined(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {

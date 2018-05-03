@@ -54,10 +54,6 @@ class ServiceProvider implements ServiceProviderInterface
             return new UserDb();
         };
 
-        $app[Command\HelpCommand::class] = function ($app) {
-            return new Command\HelpCommand($app[Net_SmartIRC::class]);
-        };
-
         $app[Command\AuthCommand::class] = function ($app) {
             return new Command\AuthCommand(
                 $app[Net_SmartIRC::class],
@@ -90,7 +86,7 @@ class ServiceProvider implements ServiceProviderInterface
             }
 
             $listeners = [
-                new Command\CommandSet($commands),
+                new Command\CommandSet($app[Net_SmartIRC::class], $commands),
                 new Event\NickChangeListener($app[UserDb::class]),
                 new Event\EventumEventsListener(
                     $app[Net_SmartIRC::class],

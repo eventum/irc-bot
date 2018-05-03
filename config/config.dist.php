@@ -58,7 +58,6 @@ return [
 
     // commands to register
     'commands' => [
-        Command\HelpCommand::class => true,
         Command\AuthCommand::class => true,
         Command\ClockInCommand::class => true,
         Command\QuarantinedIssueCommand::class => true,
