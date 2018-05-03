@@ -33,6 +33,10 @@ class ServiceProvider implements ServiceProviderInterface
             return new Net_SmartIRC();
         };
 
+        $app[Logger::class] = function ($app) {
+            return new Logger($app[Net_SmartIRC::class]);
+        };
+
         $app[Config::class] = function ($app) {
             // preload smartirc class for constants
             $app[Net_SmartIRC::class];
@@ -56,6 +60,7 @@ class ServiceProvider implements ServiceProviderInterface
 
         $app[Command\AuthCommand::class] = function ($app) {
             return new Command\AuthCommand(
+                $app[Logger::class],
                 $app[Net_SmartIRC::class],
                 $app[UserDb::class],
                 $app[EventumXmlRpcClient::class]
@@ -64,6 +69,7 @@ class ServiceProvider implements ServiceProviderInterface
 
         $app[Command\ClockInCommand::class] = function ($app) {
             return new Command\ClockInCommand(
+                $app[Logger::class],
                 $app[Net_SmartIRC::class],
                 $app[UserDb::class],
                 $app[EventumXmlRpcClient::class]
@@ -72,6 +78,7 @@ class ServiceProvider implements ServiceProviderInterface
 
         $app[Command\QuarantinedIssueCommand::class] = function ($app) {
             return new Command\QuarantinedIssueCommand(
+                $app[Logger::class],
                 $app[Net_SmartIRC::class],
                 $app[UserDb::class],
                 $app[EventumXmlRpcClient::class]
@@ -89,6 +96,7 @@ class ServiceProvider implements ServiceProviderInterface
                 new Command\CommandSet($app[Net_SmartIRC::class], $commands),
                 new Event\NickChangeListener($app[UserDb::class]),
                 new Event\EventumEventsListener(
+                    $app[Logger::class],
                     $app[Net_SmartIRC::class],
                     $app[UserDb::class],
                     $app[EventumXmlRpcClient::class],

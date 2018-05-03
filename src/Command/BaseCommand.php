@@ -14,23 +14,27 @@
 namespace Eventum\IrcBot\Command;
 
 use Eventum\IrcBot\SendResponseTrait;
+use Eventum\IrcBot\Traits\LoggerTrait;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Net_SmartIRC;
+use Psr\Log\LoggerInterface;
 
 abstract class BaseCommand
 {
     use SendResponseTrait;
+    use LoggerTrait;
 
     /** @var UserDb */
     protected $userDb;
     /** @var EventumXmlRpcClient */
     protected $rpcClient;
 
-    public function __construct(Net_SmartIRC $irc, UserDb $userDb = null, EventumXmlRpcClient $rpcClient = null)
+    public function __construct(LoggerInterface $logger, Net_SmartIRC $irc, UserDb $userDb = null, EventumXmlRpcClient $rpcClient = null)
     {
         $this->irc = $irc;
         $this->userDb = $userDb;
         $this->rpcClient = $rpcClient;
+        $this->logger = $logger;
     }
 }

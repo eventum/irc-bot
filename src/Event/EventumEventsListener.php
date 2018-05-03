@@ -17,13 +17,17 @@ use Eventum\IrcBot\Command\BaseCommand;
 use Eventum\IrcBot\Config;
 use Eventum\IrcBot\Entity\Channel;
 use Eventum\IrcBot\Entity\Project;
+use Eventum\IrcBot\Traits\LoggerTrait;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Eventum\RPC\XmlRpcException;
 use Net_SmartIRC;
+use Psr\Log\LoggerInterface;
 
 class EventumEventsListener extends BaseCommand implements EventListenerInterface
 {
+    use LoggerTrait;
+
     /** @var Config */
     private $config;
     /** @var string */
@@ -34,12 +38,13 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
     private $projects = [];
 
     public function __construct(
+        LoggerInterface $logger,
         Net_SmartIRC $irc,
         UserDb $userDb,
         EventumXmlRpcClient $rpcClient,
         Config $config
     ) {
-        parent::__construct($irc, $userDb, $rpcClient);
+        parent::__construct($logger, $irc, $userDb, $rpcClient);
         $this->default_category = $config['default_category'];
         $this->config = $config;
     }
@@ -50,7 +55,8 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
         $this->projects = $this->getProjects();
 
         if (!$this->projects) {
-            // skip notify if no projects enabled
+            $this->warning('No projects enabled, skip events processing');
+
             return;
         }
 
@@ -112,7 +118,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
 
             $channels = $project->getChannels();
             if (!$channels) {
-                // XXX: how?
+                $this->debug('No channels, this should not happen');
                 continue;
             }
 
@@ -147,6 +153,8 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
         try {
             return $this->rpcClient->getPendingMessages($project->getId(), 50);
         } catch (XmlRpcException $e) {
+            $this->error($e->getMessage());
+
             return [];
         }
     }
@@ -162,6 +170,7 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
         try {
             $this->rpcClient->markEventSent($project->getId(), (int)$ino_id);
         } catch (XmlRpcException $e) {
+            $this->error($e->getMessage());
         }
     }
 }
