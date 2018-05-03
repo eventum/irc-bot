@@ -34,6 +34,9 @@ class ServiceProvider implements ServiceProviderInterface
         };
 
         $app[Config::class] = function ($app) {
+            // preload smartirc class for constants
+            $app[Net_SmartIRC::class];
+
             return new Config($app['config.path']);
         };
 
