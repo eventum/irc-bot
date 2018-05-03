@@ -53,6 +53,11 @@ class Project implements ArrayAccess, IteratorAggregate
         return (int)$this['prj_id'];
     }
 
+    public function getTitle()
+    {
+        return $this['prj_title'];
+    }
+
     public function setChannels($channels)
     {
         $this->channels = $channels;
@@ -63,6 +68,16 @@ class Project implements ArrayAccess, IteratorAggregate
     public function getChannels()
     {
         return $this->channels;
+    }
+
+    public function getChannelNames()
+    {
+        $result = [];
+        foreach ($this->channels as $channel) {
+            $result[] = $channel->name;
+        }
+
+        return $result;
     }
 
     /**
