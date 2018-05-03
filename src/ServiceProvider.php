@@ -51,25 +51,41 @@ class ServiceProvider implements ServiceProviderInterface
             return new UserDb();
         };
 
+        $app[Command\HelpCommand::class] = function ($app) {
+            return new Command\HelpCommand($app[Net_SmartIRC::class]);
+        };
+
+        $app[Command\AuthCommand::class] = function ($app) {
+            return new Command\AuthCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
+
+        $app[Command\ClockInCommand::class] = function ($app) {
+            return new Command\ClockInCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
+
+        $app[Command\QuarantinedIssueCommand::class] = function ($app) {
+            return new Command\QuarantinedIssueCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
         $app[IrcBot::class] = function ($app) {
-            $commands = [
-                new Command\HelpCommand($app[Net_SmartIRC::class]),
-                new Command\AuthCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-                new Command\ClockInCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-                new Command\QuarantinedIssueCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-            ];
+            $commands = [];
+            foreach ($app[Config::class]['commands'] as $commandClass => $enabled) {
+                if ($enabled) {
+                    $commands[] = $app[$commandClass];
+                }
+            }
+
             $listeners = [
                 new Command\CommandSet($commands),
                 new Event\NickChangeListener($app[UserDb::class]),

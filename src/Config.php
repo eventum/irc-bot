@@ -118,6 +118,14 @@ class Config implements ArrayAccess, IteratorAggregate
 
             'debugLevel' => 0,
 
+            // commands to register
+            'commands' => [
+                Command\HelpCommand::class => true,
+                Command\AuthCommand::class => true,
+                Command\ClockInCommand::class => true,
+                Command\QuarantinedIssueCommand::class => true,
+            ],
+
             // SmartIRC logger
             'logging.smartirc' => null,
             // PHP error logs
