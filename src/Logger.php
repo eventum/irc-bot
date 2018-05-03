@@ -47,6 +47,8 @@ class Logger extends AbstractLogger
         $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
         $frame = $trace[2];
 
+        $message = "[$level] $message";
+
         if ($context) {
             $message .= '. [';
             foreach ($context as $item => $value) {
