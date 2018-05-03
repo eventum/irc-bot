@@ -6,6 +6,23 @@
         },
         "sort-packages": true
     },
+    "archive": {
+        "exclude": [
+            "*.dist",
+            "*.tar",
+            ".*",
+            "Tests",
+            "composer.*",
+            "demo",
+            "doc",
+            "docs",
+            "ext",
+            "extras",
+            "phpxmlrpc/debugger",
+            "phpxmlrpc/lib",
+            "tests"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Eventum\\IrcBot\\": "src/"
