@@ -42,6 +42,8 @@ class AuthCommand extends BaseCommand
         try {
             $authenticated = $this->rpcClient->isValidLogin($email, $password);
         } catch (XmlRpcException $e) {
+            $this->error($e->getMessage());
+
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
             return;

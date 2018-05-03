@@ -36,6 +36,8 @@ class QuarantinedIssueCommand extends BaseCommand
         try {
             $list = $this->rpcClient->getQuarantinedIssueList();
         } catch (XmlRpcException $e) {
+            $this->error($e->getMessage());
+
             $this->sendResponse($data->nick, 'Error: Temporary error');
 
             return;
