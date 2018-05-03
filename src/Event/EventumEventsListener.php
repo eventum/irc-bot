@@ -33,9 +33,9 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
     /** @var string */
     private $default_category;
     /** @var array */
-    private $channels = [];
+    private $channels;
     /** @var Project[] */
-    private $projects = [];
+    private $projects;
 
     public function __construct(
         LoggerInterface $logger,
@@ -51,45 +51,16 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
 
     public function register(Net_SmartIRC $irc)
     {
-        $this->channels = $this->config->getChannels();
-        $this->projects = $this->getProjects();
-
-        if (!$this->projects) {
-            $this->warning('No projects enabled, skip events processing');
-
-            return;
-        }
-
         $pollInterval = $this->config['events.poll_interval'];
         $irc->registerTimeHandler($pollInterval, $this, 'notifyEvents');
     }
 
-    private function getProjects()
-    {
-        $projects = [];
-
-        foreach ($this->channels as $projectName => $channels) {
-            $result = $this->rpcClient->getProjectByName($projectName);
-            if (!$result) {
-                continue;
-            }
-            $project = new Project($result);
-            if (!$project->enabled()) {
-                continue;
-            }
-            $project->setChannels($channels);
-            /** @var Channel $channel */
-            foreach ($channels as $channel) {
-                $channel->addProject($project);
-            }
-            $projects[$project->getId()] = $project;
-        }
-
-        return $projects;
-    }
-
     public function notifyEvents(Net_SmartIRC $irc)
     {
+        if (!$this->configure()) {
+            return;
+        }
+
         foreach ($this->projects as $project) {
             if (!$project->anyChannelJoined($irc)) {
                 continue;
@@ -172,5 +143,59 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
         } catch (XmlRpcException $e) {
             $this->error($e->getMessage());
         }
+    }
+
+    private function configure()
+    {
+        if ($this->channels === null) {
+            $this->channels = $this->config->getChannels();
+        }
+
+        if ($this->projects === null) {
+            try {
+                $this->projects = $this->resolveProjects();
+            } catch (XmlRpcException $e) {
+                $this->error($e->getMessage());
+
+                return false;
+            }
+
+            if (!$this->projects) {
+                $this->warning('No projects enabled, skip events processing');
+
+                return false;
+            }
+
+            foreach ($this->projects as $project) {
+                $channels = implode(', ', $project->getChannelNames());
+                $this->notice("Loaded project '{$project->getTitle()}' (#{$project->getId()}): Channels: $channels");
+            }
+        }
+
+        return (bool)$this->projects;
+    }
+
+    private function resolveProjects()
+    {
+        $projects = [];
+
+        foreach ($this->channels as $projectName => $channels) {
+            $result = $this->rpcClient->getProjectByName($projectName);
+            if (!$result) {
+                continue;
+            }
+            $project = new Project($result);
+            if (!$project->enabled()) {
+                continue;
+            }
+            $project->setChannels($channels);
+            /** @var Channel $channel */
+            foreach ($channels as $channel) {
+                $channel->addProject($project);
+            }
+            $projects[$project->getId()] = $project;
+        }
+
+        return $projects;
     }
 }
