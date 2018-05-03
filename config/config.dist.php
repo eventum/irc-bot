@@ -51,7 +51,10 @@ return [
         'Default Project' => '#issues',
     ],
 
-    /**
+    // default category for events without it
+    'default_category' => 'default',
+
+    /*
      * Bitwise debug level out of SMARTIRC_DEBUG_* constants
      *
      * @see Net_SmartIRC::setDebugLevel
@@ -81,6 +84,4 @@ return [
 
     // PHP error logs, defaults to php.ini defaults
 //    'logging.errorlog' => 'irc_bot_error.log',
-
-    'default_category' => 'default',
 ];
