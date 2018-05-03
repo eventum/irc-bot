@@ -20,11 +20,11 @@ use Net_SmartIRC_data;
 class NickChangeListener implements EventListenerInterface
 {
     /** @var UserDb */
-    private $userdb;
+    private $userDb;
 
     public function __construct(UserDb $userdb)
     {
-        $this->userdb = $userdb;
+        $this->userDb = $userdb;
     }
 
     public function register(Net_SmartIRC $irc)
@@ -44,7 +44,7 @@ class NickChangeListener implements EventListenerInterface
      */
     public function updateAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        $user = $this->userdb->findByNick($data->nick);
+        $user = $this->userDb->findByNick($data->nick);
         if (!$user) {
             return;
         }
@@ -60,11 +60,11 @@ class NickChangeListener implements EventListenerInterface
      */
     public function removeAuthenticatedUser(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
-        $user = $this->userdb->findByNick($data->nick);
+        $user = $this->userDb->findByNick($data->nick);
         if (!$user) {
             return;
         }
 
-        $this->userdb->remove($user);
+        $this->userDb->remove($user);
     }
 }
