@@ -14,18 +14,30 @@
 namespace Eventum\IrcBot\Command;
 
 use Eventum\IrcBot\Event\EventListenerInterface;
+use Eventum\IrcBot\ParseDocCommentTrait;
+use Eventum\IrcBot\SendResponseTrait;
 use Net_SmartIRC;
+use Net_SmartIRC_data;
 use ReflectionClass;
 use ReflectionMethod;
 
 class CommandSet implements EventListenerInterface
 {
+    use SendResponseTrait;
+    use ParseDocCommentTrait;
+
     /** @var array */
     private $commands;
 
-    public function __construct(array $commands)
+    /** @var string[] */
+    private $usage = [];
+
+    public function __construct(Net_SmartIRC $irc, array $commands)
     {
+        $this->irc = $irc;
         $this->commands = $commands;
+        // always add ourselves for help command
+        $this->commands[] = $this;
     }
 
     public function register(Net_SmartIRC $irc)
@@ -37,10 +49,35 @@ class CommandSet implements EventListenerInterface
                 $commandName = $this->getCommandName($methodName);
                 $regex = "^!?{$commandName}\b";
                 $irc->registerActionHandler(SMARTIRC_TYPE_QUERY, $regex, $command, $methodName);
+
+                $usage = $this->getUsageDoc($method);
+                if ($usage) {
+                    $this->usage[] = "$commandName: $usage";
+                }
             }
             // unreference, as registerActionHandler uses &$command
             unset($command);
+
+            // keep order sorted
+            asort($this->usage);
         }
+    }
+
+    /**
+     * @param Net_SmartIRC $irc
+     * @param Net_SmartIRC_data $data
+     * @usage Display this usage
+     */
+    final public function help(Net_SmartIRC $irc, Net_SmartIRC_data $data)
+    {
+        if (!$this->usage) {
+            $this->sendResponse($data->nick, 'There are no commands enabled to provide usage');
+
+            return;
+        }
+
+        $this->sendResponse($data->nick, 'This is the list of available commands:');
+        $this->sendResponse($data->nick, $this->usage);
     }
 
     /**
@@ -64,6 +101,16 @@ class CommandSet implements EventListenerInterface
         }
 
         return $methods;
+    }
+
+    private function getUsageDoc(ReflectionMethod $method)
+    {
+        $doc = $this->parseBlockComment($method->getDocComment());
+        if (!isset($doc['usage'])) {
+            return null;
+        }
+
+        return implode(' ', $doc['usage'][0]);
     }
 
     /**

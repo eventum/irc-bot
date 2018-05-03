@@ -34,6 +34,9 @@ class ServiceProvider implements ServiceProviderInterface
         };
 
         $app[Config::class] = function ($app) {
+            // preload smartirc class for constants
+            $app[Net_SmartIRC::class];
+
             return new Config($app['config.path']);
         };
 
@@ -51,27 +54,39 @@ class ServiceProvider implements ServiceProviderInterface
             return new UserDb();
         };
 
+        $app[Command\AuthCommand::class] = function ($app) {
+            return new Command\AuthCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
+
+        $app[Command\ClockInCommand::class] = function ($app) {
+            return new Command\ClockInCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
+
+        $app[Command\QuarantinedIssueCommand::class] = function ($app) {
+            return new Command\QuarantinedIssueCommand(
+                $app[Net_SmartIRC::class],
+                $app[UserDb::class],
+                $app[EventumXmlRpcClient::class]
+            );
+        };
         $app[IrcBot::class] = function ($app) {
-            $commands = [
-                new Command\HelpCommand($app[Net_SmartIRC::class]),
-                new Command\AuthCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-                new Command\ClockInCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-                new Command\QuarantinedIssueCommand(
-                    $app[Net_SmartIRC::class],
-                    $app[UserDb::class],
-                    $app[EventumXmlRpcClient::class]
-                ),
-            ];
+            $commands = [];
+            foreach ($app[Config::class]['commands'] as $commandClass => $enabled) {
+                if ($enabled) {
+                    $commands[] = $app[$commandClass];
+                }
+            }
+
             $listeners = [
-                new Command\CommandSet($commands),
+                new Command\CommandSet($app[Net_SmartIRC::class], $commands),
                 new Event\NickChangeListener($app[UserDb::class]),
                 new Event\EventumEventsListener(
                     $app[Net_SmartIRC::class],

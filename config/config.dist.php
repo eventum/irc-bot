@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\IrcBot\Command;
+
 // This is an example config file for the IRC bot.
 // This file should be copied to config.php and customized for your needs.
 // You can remove this comment :)
@@ -53,6 +55,13 @@ return [
 
     // default category for events without it
     'default_category' => 'default',
+
+    // commands to register
+    'commands' => [
+        Command\AuthCommand::class => true,
+        Command\ClockInCommand::class => true,
+        Command\QuarantinedIssueCommand::class => true,
+    ],
 
     /*
      * Bitwise debug level out of SMARTIRC_DEBUG_* constants

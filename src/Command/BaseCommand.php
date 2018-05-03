@@ -13,14 +13,15 @@
 
 namespace Eventum\IrcBot\Command;
 
+use Eventum\IrcBot\SendResponseTrait;
 use Eventum\IrcBot\UserDb;
 use Eventum\RPC\EventumXmlRpcClient;
 use Net_SmartIRC;
 
 abstract class BaseCommand
 {
-    /** @var Net_SmartIRC */
-    protected $irc;
+    use SendResponseTrait;
+
     /** @var UserDb */
     protected $userDb;
     /** @var EventumXmlRpcClient */
@@ -31,22 +32,5 @@ abstract class BaseCommand
         $this->irc = $irc;
         $this->userDb = $userDb;
         $this->rpcClient = $rpcClient;
-    }
-
-    /**
-     * Method used to send a message to the given target.
-     *
-     * @param string $target The target for this message
-     * @param string|string[] $response The message to send
-     * @param int $priority the priority level of the message
-     */
-    protected function sendResponse($target, $response, $priority = SMARTIRC_MEDIUM)
-    {
-        if (strpos($target, '#') !== 0) {
-            $type = SMARTIRC_TYPE_QUERY;
-        } else {
-            $type = SMARTIRC_TYPE_CHANNEL;
-        }
-        $this->irc->message($type, $target, $response, $priority);
     }
 }

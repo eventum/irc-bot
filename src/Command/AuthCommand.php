@@ -21,10 +21,9 @@ use Net_SmartIRC_data;
 class AuthCommand extends BaseCommand
 {
     /**
-     * Format is "auth user@example.com password"
-     *
      * @param Net_SmartIRC $irc
      * @param Net_SmartIRC_data $data
+     * @usage Format is "auth user@example.com password"
      */
     final public function auth(Net_SmartIRC $irc, Net_SmartIRC_data $data)
     {
