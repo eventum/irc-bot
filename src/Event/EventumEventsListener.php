@@ -54,7 +54,8 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
             return;
         }
 
-        $irc->registerTimeHandler(3000, $this, 'notifyEvents');
+        $pollInterval = $this->config['events.poll_interval'];
+        $irc->registerTimeHandler($pollInterval, $this, 'notifyEvents');
     }
 
     private function getProjects()

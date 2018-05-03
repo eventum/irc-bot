@@ -114,6 +114,7 @@ class Config implements ArrayAccess, IteratorAggregate
             'channels' => [
                 'Default Project' => '#issues',
             ],
+            'default_category' => 'default',
 
             'debugLevel' => 0,
 
@@ -122,7 +123,8 @@ class Config implements ArrayAccess, IteratorAggregate
             // PHP error logs
             'logging.errorlog' => null,
 
-            'default_category' => 'default',
+            // in milliseconds, how often to pull events from xmlrpc
+            'events.poll_interval' => 3000,
         ]);
 
         $resolver->setAllowedTypes('channels', 'array');
