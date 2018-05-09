@@ -61,6 +61,12 @@ class EventumEventsListener extends BaseCommand implements EventListenerInterfac
             return;
         }
 
+        if (!$irc->isConnected()) {
+            $this->debug('Disconnected; Skip events processing');
+
+            return;
+        }
+
         foreach ($this->projects as $project) {
             if (!$project->anyChannelJoined($irc)) {
                 continue;
