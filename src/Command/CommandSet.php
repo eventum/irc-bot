@@ -56,10 +56,10 @@ class CommandSet implements EventListenerInterface
             }
             // unreference, as registerActionHandler uses &$command
             unset($command);
-
-            // keep order sorted
-            asort($this->usage);
         }
+
+        // keep order sorted
+        asort($this->usage);
     }
 
     /**
